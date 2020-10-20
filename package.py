@@ -818,7 +818,7 @@ def install_pip_requirements(query, requirements_file):
         docker_file = docker.docker_file
         docker_image = docker.docker_image
         docker_build_root = docker.docker_build_root
-        docker_mount_directory = query.docker_mount_directory
+        docker_mount_directory = docker.docker_mount_directory
 
         if docker_image:
             ok = False
