@@ -530,3 +530,9 @@ variable "docker_pip_cache" {
   type        = any
   default     = null
 }
+
+variable "docker_mount_directory" {
+  description = "Directory where to mount volumes when building packages with docker"
+  type        = string
+  default     = null
+}

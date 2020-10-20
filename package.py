@@ -118,10 +118,10 @@ def cd(path, silent=False):
 
 
 @contextmanager
-def tempdir():
+def tempdir(docker_mount_directory):
     """Creates a temporary directory and then deletes it afterwards."""
     prefix = 'terraform-aws-lambda-'
-    path = tempfile.mkdtemp(prefix=prefix)
+    path = tempfile.mkdtemp(prefix=prefix, dir=docker_mount_directory)
     cmd_log.info('mktemp -d %sXXXXXXXX # %s', prefix, shlex.quote(path))
     try:
         yield path
@@ -818,6 +818,7 @@ def install_pip_requirements(query, requirements_file):
         docker_file = docker.docker_file
         docker_image = docker.docker_image
         docker_build_root = docker.docker_build_root
+        docker_mount_directory = query.docker_mount_directory
 
         if docker_image:
             ok = False
@@ -844,7 +845,7 @@ def install_pip_requirements(query, requirements_file):
     working_dir = os.getcwd()
 
     log.info('Installing python requirements: %s', requirements_file)
-    with tempdir() as temp_dir:
+    with tempdir(docker_mount_directory) as temp_dir:
         requirements_filename = os.path.basename(requirements_file)
         target_file = os.path.join(temp_dir, requirements_filename)
         shutil.copyfile(requirements_file, target_file)
