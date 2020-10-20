@@ -118,7 +118,7 @@ def cd(path, silent=False):
 
 
 @contextmanager
-def tempdir(docker_mount_directory):
+def tempdir(docker_mount_directory=None):
     """Creates a temporary directory and then deletes it afterwards."""
     prefix = 'terraform-aws-lambda-'
     path = tempfile.mkdtemp(prefix=prefix, dir=docker_mount_directory)
