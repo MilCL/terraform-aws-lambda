@@ -532,7 +532,7 @@ variable "docker_pip_cache" {
 }
 
 variable "docker_mount_directory" {
-  description = "Directory where to mount volumes when building packages with docker"
+  description = "Directory where to mount volumes when building packages with docker. Useful for when you can't mount directories inside the default '/tmp' directory."
   type        = string
   default     = null
 }
