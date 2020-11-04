@@ -742,6 +742,7 @@ class BuildPlanManager:
         sh_work_dir = None
         pf = None
 
+        print("--> BUILD PLAN <--")
         print(build_plan)
 
         for action in build_plan:
