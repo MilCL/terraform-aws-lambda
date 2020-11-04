@@ -652,7 +652,7 @@ class BuildPlanManager:
                 hash(requirements)
 
         def commands_step(path, commands):
-            if not commands:
+            if not  :
                 return
 
             if isinstance(commands, str):
@@ -741,6 +741,8 @@ class BuildPlanManager:
         zs = zip_stream
         sh_work_dir = None
         pf = None
+
+        print(build_plan)
 
         for action in build_plan:
             cmd = action[0]
