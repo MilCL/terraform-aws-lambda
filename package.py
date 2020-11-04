@@ -873,11 +873,13 @@ def install_pip_requirements(query, requirements_file, pip_target):
 
         # Install dependencies into the temporary directory.
         with cd(temp_dir):
+            target = pip_target or '.'
+
             pip_command = [
                 python_exec, '-m', 'pip',
                 'install', '--no-compile',
                 '--prefix=', '--target={}',
-                '--requirement={}'.format(requirements_filename, ),
+                '--requirement={}'.format(target, requirements_filename),
             ]
             if docker:
                 with_ssh_agent = docker.with_ssh_agent
