@@ -652,7 +652,7 @@ class BuildPlanManager:
                 hash(requirements)
 
         def commands_step(path, commands):
-            if not  :
+            if not commands:
                 return
 
             if isinstance(commands, str):
