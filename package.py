@@ -878,8 +878,8 @@ def install_pip_requirements(query, requirements_file, pip_target):
             pip_command = [
                 python_exec, '-m', 'pip',
                 'install', '--no-compile',
-                '--prefix=', '--target={}',
-                '--requirement={}'.format(target, requirements_filename),
+                '--prefix=', '--target={}'.format(target),
+                '--requirement={}'.format(requirements_filename),
             ]
             if docker:
                 with_ssh_agent = docker.with_ssh_agent
