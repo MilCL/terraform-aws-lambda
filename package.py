@@ -639,7 +639,8 @@ class BuildPlanManager:
         step = lambda *x: build_plan.append(x)
         hash = source_paths.append
 
-        def pip_requirements_step(path, prefix=None, required=False):
+        def pip_requirements_step(path, prefix=None, pip_target=None,
+                                  required=False):
             requirements = path
             if os.path.isdir(path):
                 requirements = os.path.join(path, 'requirements.txt')
@@ -648,7 +649,7 @@ class BuildPlanManager:
                     raise RuntimeError(
                         'File not found: {}'.format(requirements))
             else:
-                step('pip', runtime, requirements, prefix)
+                step('pip', runtime, requirements, prefix, pip_target)
                 hash(requirements)
 
         def commands_step(path, commands):
@@ -716,15 +717,17 @@ class BuildPlanManager:
                     commands_step(path, commands)
                 else:
                     prefix = claim.get('prefix_in_zip')
+                    pip_target = claim.get('pip_target')
                     pip_requirements = claim.get('pip_requirements')
                     runtime = claim.get('runtime', query.runtime)
 
                     if pip_requirements and runtime.startswith('python'):
                         if isinstance(pip_requirements, bool) and path:
-                            pip_requirements_step(path, prefix, required=True)
+                            pip_requirements_step(path, prefix, pip_target,
+                                                  required=True)
                         else:
                             pip_requirements_step(pip_requirements, prefix,
-                                                  required=True)
+                                                  pip_target, required=True)
                     if path:
                         step('zip', path, prefix)
                         hash(path)
@@ -763,8 +766,9 @@ class BuildPlanManager:
                 else:
                     zs.write_file(source_path, prefix=prefix, timestamp=ts)
             elif cmd == 'pip':
-                runtime, pip_requirements, prefix = action[1:]
-                with install_pip_requirements(query, pip_requirements) as rd:
+                runtime, pip_requirements, prefix, pip_target = action[1:]
+                with install_pip_requirements(query, pip_requirements,
+                                              pip_target) as rd:
                     if rd:
                         if pf:
                             self._zip_write_with_filter(zs, pf, rd, prefix,
@@ -804,7 +808,7 @@ class BuildPlanManager:
 
 
 @contextmanager
-def install_pip_requirements(query, requirements_file):
+def install_pip_requirements(query, requirements_file, pip_target):
     # TODO:
     #  1. Emit files instead of temp_dir
 
@@ -872,8 +876,8 @@ def install_pip_requirements(query, requirements_file):
             pip_command = [
                 python_exec, '-m', 'pip',
                 'install', '--no-compile',
-                '--prefix=', '--target=.',
-                '--requirement={}'.format(requirements_filename),
+                '--prefix=', '--target={}',
+                '--requirement={}'.format(requirements_filename, ),
             ]
             if docker:
                 with_ssh_agent = docker.with_ssh_agent
